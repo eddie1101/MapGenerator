@@ -3,7 +3,6 @@ import map.Region;
 import processing.core.PApplet;
 import thread.MapGenerator;
 import validity_function.ContiguousLandmassValidity;
-import validity_function.RegionalValidity;
 import validity_function.ValidityFunction;
 import weight_function.Continent;
 import weight_function.Marsh;
@@ -20,7 +19,7 @@ public class Main extends PApplet {
     int mapHeight, mapWidth, mapTiles;
     int dim = 3;
 
-    long timestamp;
+    long timestamp, totalTime = 0;
 
     WeightFunction w;
     ValidityFunction v;
@@ -38,14 +37,14 @@ public class Main extends PApplet {
 
         map = new Map(this, dim);
 
-        w = new Marsh(map);
+        w = new Continent(map);
         v = new ContiguousLandmassValidity();
 
         regions = new Region[4];
-        regions[0] = map.getSubregion(0, 0, mapWidth / 2, mapHeight / 2);
-        regions[1] = map.getSubregion(mapWidth / 2, 0, mapWidth, mapHeight / 2);
-        regions[2] = map.getSubregion(0, mapHeight / 2, mapWidth / 2, mapHeight);
-        regions[3] = map.getSubregion(mapWidth / 2, mapHeight / 2, mapWidth, mapHeight);
+        regions[0] = map.createSubregion(0, 0, mapWidth / 2, mapHeight / 2);
+        regions[1] = map.createSubregion(mapWidth / 2, 0, mapWidth, mapHeight / 2);
+        regions[2] = map.createSubregion(0, mapHeight / 2, mapWidth / 2, mapHeight);
+        regions[3] = map.createSubregion(mapWidth / 2, mapHeight / 2, mapWidth, mapHeight);
 
         threads = new MapGenerator[4];
         for(int i = 0; i < 4; i++) {
@@ -63,16 +62,19 @@ public class Main extends PApplet {
         if(map.getLand() >= map.maxLand) {
             map.shores();
             map.ocean();
-            System.out.println(System.currentTimeMillis() - timestamp);
+            if(totalTime == 0)
+                totalTime = System.currentTimeMillis() - timestamp;
+            System.out.println(totalTime);
             map.draw(this);
         }
 //        else {
 //            map.iterate(w, v);
+//            map.draw(this);
 //        }
 
 
         setTitle();
-        drawOverlay();
+//        drawOverlay();
     }
 
     public void setTitle() {

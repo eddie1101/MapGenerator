@@ -5,7 +5,6 @@ import processing.core.PConstants;
 import validity_function.ValidityFunction;
 import weight_function.WeightFunction;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Map {
@@ -48,12 +47,24 @@ public class Map {
         return executionRegion;
     }
 
-    public synchronized Region getMainRegion() {
+    public Region getMainRegion() {
         return mainRegion;
     }
 
-    public Region getSubregion(int x, int y, int xbound, int ybound) {
-        return mainRegion.getSubregion(x, y, xbound, ybound);
+    public Region createSubregion(int x, int y, int xbound, int ybound) {
+        return mainRegion.createSubregion(x, y, xbound, ybound);
+    }
+
+    public Region[] createSubregions(int numRegions) {
+        Region[] regions = new Region[numRegions];
+        for(int i = 0; i < numRegions; i++) {
+            int x1 = 0; //
+            int y1 = 0; // SOLVE THESE COORDINATES
+            int x2 = 0; //
+            int y2 = 0; //
+            regions[i] = createSubregion(x1, y1, x2, y2);
+        }
+        return regions;
     }
 
     public float getLandPercent() {
@@ -80,7 +91,7 @@ public class Map {
         brx = tilex + 2;
         bry = tiley + 2;
         land++;
-        executionRegion = getSubregion(tlx, tly, brx, bry);
+        executionRegion = createSubregion(tlx, tly, brx, bry);
     }
 
     public boolean adjacent(int tilex, int tiley, TileType compare) {
@@ -136,7 +147,7 @@ public class Map {
 
     public void updateExecutionRegion() {
         if(executionRegionUpdate) {
-            executionRegion = mainRegion.getSubregion(tlx, tly, brx, bry);
+            executionRegion = mainRegion.createSubregion(tlx, tly, brx, bry);
             executionRegionUpdate = false;
         }
     }
@@ -153,11 +164,11 @@ public class Map {
             }
         }
 
-        p.stroke(255, 0, 0);
-        p.line(tlx * tileSize, tly * tileSize, brx * tileSize, tly * tileSize);
-        p.line(tlx * tileSize, tly * tileSize, tlx * tileSize, bry * tileSize);
-        p.line(tlx * tileSize, bry * tileSize, brx * tileSize, bry * tileSize);
-        p.line(brx * tileSize, tly * tileSize, brx * tileSize, bry * tileSize);
-        p.stroke(0);
+//        p.stroke(255, 0, 0);
+//        p.line(tlx * tileSize, tly * tileSize, brx * tileSize, tly * tileSize);
+//        p.line(tlx * tileSize, tly * tileSize, tlx * tileSize, bry * tileSize);
+//        p.line(tlx * tileSize, bry * tileSize, brx * tileSize, bry * tileSize);
+//        p.line(brx * tileSize, tly * tileSize, brx * tileSize, bry * tileSize);
+//        p.stroke(0);
     }
 }

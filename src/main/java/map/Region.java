@@ -48,7 +48,7 @@ public class Region {
         grid[x][y] = tile;
     }
 
-    public Region getSubregion(int x, int y, int xbound, int ybound) {
+    public Region createSubregion(int x, int y, int xbound, int ybound) {
         if(xbound > cols) xbound = cols;
         if(ybound > rows) ybound = rows;
         Tile[][] subregion = new Tile[xbound - x][ybound - y];
