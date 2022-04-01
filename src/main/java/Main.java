@@ -54,7 +54,7 @@ public class Main extends PApplet {
 
         map.seed(mapWidth / 2,mapHeight / 2);
         timestamp = System.currentTimeMillis();
-//        map.generate(w, v);
+        map.generate(w, v);
     }
 
     public void draw() {
@@ -71,6 +71,7 @@ public class Main extends PApplet {
 //            map.iterate(w, v);
 //            map.draw(this);
 //        }
+//        map.draw(this);
 
 
         setTitle();

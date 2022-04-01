@@ -6,6 +6,7 @@ import validity_function.ValidityFunction;
 import weight_function.WeightFunction;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Map {
 
@@ -14,8 +15,10 @@ public class Map {
     Region mainRegion;
     Region executionRegion;
 
+    public volatile AtomicInteger land = new AtomicInteger(0);
+
     int tileSize, cols, rows;
-    public int land = 0, maxLand;
+    public final int maxLand;
     public int tlx, tly, brx, bry;
 
     boolean executionRegionUpdate = false;
@@ -68,18 +71,18 @@ public class Map {
     }
 
     public float getLandPercent() {
-        return (float) land / maxLand;
+        return (float) land.get() / maxLand;
     }
 
-    public synchronized void addLand(int land) {
-        this.land += land;
+    public void addLand(int land) {
+        this.land.addAndGet(land);
     }
 
-    public synchronized int getLand() {
-        return land;
+    public int getLand() {
+        return land.get();
     }
 
-    public synchronized int getMaxLand() {
+    public int getMaxLand() {
         return maxLand;
     }
 
@@ -90,7 +93,7 @@ public class Map {
         tly = tiley - 1;
         brx = tilex + 2;
         bry = tiley + 2;
-        land++;
+        addLand(1);
         executionRegion = createSubregion(tlx, tly, brx, bry);
     }
 
@@ -129,7 +132,7 @@ public class Map {
     }
 
     public void generate(WeightFunction w, ValidityFunction v) {
-        while(land < maxLand) iterate(w, v);
+        while(getLand() < maxLand) iterate(w, v);
     }
 
     public void updateExecutionBounds(int x, int y) {
