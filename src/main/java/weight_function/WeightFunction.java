@@ -1,8 +1,8 @@
 package weight_function;
 
-import map.Tile;
+import map.Map;
 
 @FunctionalInterface
 public interface WeightFunction {
-    float getWeight(int x, int y);
+    float getWeight(int x, int y, Map map);
 }

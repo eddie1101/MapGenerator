@@ -1,5 +1,6 @@
 package map;
 
+import processing.core.PApplet;
 import validity_function.ValidityFunction;
 import weight_function.WeightFunction;
 
@@ -100,7 +101,7 @@ public class Region {
         ArrayList<Tile> validTiles = this.gatherValidTiles(v);
         for(int i = 0; i < validTiles.size(); i++) {
             Tile tile = validTiles.get(i);
-            tile.setWeight(w.getWeight(tile.x, tile.y));
+            tile.setWeight(w.getWeight(tile.x, tile.y, map));
             if(random.nextFloat() < tile.weight) {
                 tile.type = TileType.LAND;
                 land++;
@@ -130,5 +131,11 @@ public class Region {
         return land;
     }
 
+    public void drawBorders(PApplet p, int size) {
+        p.stroke(255, 0, 0);
+        p.fill(0, 0);
+        p.rect(origX * size, origY * size, cols * size, rows * size);
+        p.stroke(0);
+    }
 
 }

@@ -3,6 +3,7 @@ package thread;
 import map.Map;
 import map.Region;
 import validity_function.ValidityFunction;
+import weight_function.Marsh;
 import weight_function.WeightFunction;
 
 public class MapGenerator extends Thread {
@@ -23,7 +24,10 @@ public class MapGenerator extends Thread {
 
     public void run() {
         while(map.getLand() < map.getMaxLand()) {
-            region.iterate(w, v);
+//            if(map.getLand() < map.getMaxLand() / 2)
+//                region.iterate(new Marsh(), v);
+//            else
+                region.iterate(w, v);
         }
     }
 

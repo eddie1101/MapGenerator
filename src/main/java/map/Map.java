@@ -15,6 +15,8 @@ public class Map {
     Region mainRegion;
     Region executionRegion;
 
+    WeightFunction w;
+
     public volatile AtomicInteger land = new AtomicInteger(0);
 
     int tileSize, cols, rows;
@@ -23,9 +25,10 @@ public class Map {
 
     boolean executionRegionUpdate = false;
 
-    public Map(PApplet p, int tileSize) {
+    public Map(PApplet p, int tileSize, WeightFunction w) {
 
         this.tileSize = tileSize;
+        this.w = w;
 
         cols = p.width / tileSize;
         rows = p.height / tileSize;
@@ -58,14 +61,24 @@ public class Map {
         return mainRegion.createSubregion(x, y, xbound, ybound);
     }
 
+    /**
+     * Precondition: numRegions is a square number
+     * @param numRegions
+     * @return
+     */
     public Region[] createSubregions(int numRegions) {
         Region[] regions = new Region[numRegions];
-        for(int i = 0; i < numRegions; i++) {
-            int x1 = 0; //
-            int y1 = 0; // SOLVE THESE COORDINATES
-            int x2 = 0; //
-            int y2 = 0; //
-            regions[i] = createSubregion(x1, y1, x2, y2);
+        int side = (int) Math.sqrt(numRegions), idx = 0;
+        int cIncrement = (int) Math.ceil((float)  cols / side);
+        int rIncrement = (int) Math.ceil((float)  rows / side);
+        for(int i = 0; i < side; i++) {
+            for(int n = 0; n < side; n++) {
+                int x1 = n * cIncrement;
+                int y1 = i * rIncrement;
+                int x2 = n * cIncrement + cIncrement;
+                int y2 = i * rIncrement + rIncrement;
+                regions[idx++] = createSubregion(x1, y1, x2, y2);
+            }
         }
         return regions;
     }
@@ -86,9 +99,12 @@ public class Map {
         return maxLand;
     }
 
+    public float getWeight(int x, int y) {
+        return w.getWeight(x, y, this);
+    }
+
     public void seed(int tilex, int tiley) {
         mainRegion.setTile(tilex, tiley, TileType.LAND);
-
         tlx = tilex - 1;
         tly = tiley - 1;
         brx = tilex + 2;
@@ -127,12 +143,12 @@ public class Map {
         }
     }
 
-    public int iterate(WeightFunction w, ValidityFunction v) {
+    public int iterate(ValidityFunction v) {
         return mainRegion.iterate(w, v);
     }
 
     public void generate(WeightFunction w, ValidityFunction v) {
-        while(getLand() < maxLand) iterate(w, v);
+        while(getLand() < maxLand) iterate(v);
     }
 
     public void updateExecutionBounds(int x, int y) {
